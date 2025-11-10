@@ -3,11 +3,21 @@ class EventsController < ApplicationController
 
   # GET /events or /events.json
   def index
-    @events = Event.all
+    # Loads all events and their associated users (eager loading for efficiency)
+    @events = Event.includes(:user).all
+
+    respond_to do |format|
+      format.html # renders the default index.html.erb
+      format.json { render json: @events.to_json(include: :user) }
+    end
   end
 
   # GET /events/1 or /events/1.json
   def show
+    respond_to do |format|
+      format.html # renders the default show.html.erb
+      format.json { render json: @event.to_json(include: :user) }
+    end
   end
 
   # GET /events/new
@@ -22,6 +32,9 @@ class EventsController < ApplicationController
   # POST /events or /events.json
   def create
     @event = Event.new(event_params)
+
+    # Temporary association until authentication is implemented
+    @event.user_id ||= User.first&.id
 
     respond_to do |format|
       if @event.save
@@ -60,11 +73,11 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      @event = Event.find(params.expect(:id))
+      @event = Event.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def event_params
-      params.expect(event: [ :title, :description, :location, :date, :time, :capacity, :user_id ])
+      params.require(:event).permit(:title, :description, :location, :date, :time, :capacity, :user_id)
     end
 end

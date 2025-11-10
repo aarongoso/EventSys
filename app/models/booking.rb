@@ -12,8 +12,11 @@ class Booking < ApplicationRecord
   private
 
   def event_capacity_not_exceeded
+    # Skip validation if no associated event is found
+    return unless event.present?
+
     if event.bookings.count >= event.capacity
-      errors.add(:base, "This event is fully booked.")
+      errors.add(:base, "Event is full. Cannot create booking.")
     end
   end
 end

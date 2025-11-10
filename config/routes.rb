@@ -1,17 +1,18 @@
 Rails.application.routes.draw do
+    # RESTful routes for all main models — Users, Events, and Bookings
+  # These automatically create all CRUD routes (index, show, new, edit, create, update, destroy)
   resources :bookings
   resources :events
   resources :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check route — used by Rails to verify the app boots correctly
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Set the homepage of the application to show all Events
+  # This means visiting http://localhost:3000/ will display the Events index view
+    root "events#index"
 end
