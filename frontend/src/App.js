@@ -6,6 +6,8 @@ import "./styles/custom.css";
 // Home Page Component
 function Home() {
   const [events, setEvents] = useState([]);
+  const [success, setSuccess] = useState("");   // Success message state
+  const [error, setError] = useState("");       // Error message state
 
   useEffect(() => {
     fetch("http://localhost:3000/events.json")
@@ -13,6 +15,32 @@ function Home() {
       .then((data) => setEvents(data))
       .catch((err) => console.error("Error fetching events:", err));
   }, []);
+
+  // BOOKING FUNCTION (sends POST request to Rails API)
+  const handleBooking = (eventId) => {
+    fetch("http://localhost:3000/bookings.json", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        booking: {
+          user_id: 1,       // TEMPORARY until i add devise authentication
+          event_id: eventId,
+          status: "confirmed"
+        }
+      })
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errData = await res.json();
+          setError("Booking failed: " + JSON.stringify(errData));
+        } else {
+          setSuccess("Booking confirmed!");
+        }
+      })
+      .catch((err) => {
+        setError("Network error: " + err.message);
+      });
+  };
 
   return (
     <div>
@@ -23,6 +51,21 @@ function Home() {
           Your all-in-one platform to create, book, and explore events.
         </p>
       </header>
+
+      {/* Success / Error Alerts */}
+      <div className="container mt-3">
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success" role="alert">
+            {success}
+          </div>
+        )}
+      </div>
 
       {/* Event Cards */}
       <div className="container my-5">
@@ -39,14 +82,28 @@ function Home() {
                   <div className="card-body">
                     <h5 className="card-title fw-bold">{event.title}</h5>
                     <p className="text-muted mb-1">{event.location}</p>
+
                     <p>
                       Date: {new Date(event.date).toLocaleDateString()} | Time:{" "}
-                      {new Date(event.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(event.time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
+
                     <p className="card-text">{event.description}</p>
+
                     <p className="fw-semibold text-end text-success">
                       Capacity: {event.capacity}
                     </p>
+
+                    {/* BOOK NOW BUTTON */}
+                    <button
+                      className="btn btn-primary w-100 mt-2"
+                      onClick={() => handleBooking(event.id)}
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </div>
               </div>
@@ -102,6 +159,8 @@ function CreateEvent() {
     <div className="container my-5">
       <h2 className="mb-4 text-center">Create New Event</h2>
       <form className="col-md-6 mx-auto" onSubmit={handleSubmit}>
+
+        {/* Title */}
         <div className="mb-3">
           <label className="form-label">Title</label>
           <input
@@ -114,6 +173,7 @@ function CreateEvent() {
           />
         </div>
 
+        {/* Description */}
         <div className="mb-3">
           <label className="form-label">Description</label>
           <textarea
@@ -125,6 +185,7 @@ function CreateEvent() {
           />
         </div>
 
+        {/* Location */}
         <div className="mb-3">
           <label className="form-label">Location</label>
           <input
@@ -137,6 +198,7 @@ function CreateEvent() {
           />
         </div>
 
+        {/* Date + Time */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label">Date</label>
@@ -163,6 +225,7 @@ function CreateEvent() {
           </div>
         </div>
 
+        {/* Capacity */}
         <div className="mb-3">
           <label className="form-label">Capacity</label>
           <input
@@ -182,7 +245,6 @@ function CreateEvent() {
     </div>
   );
 }
-
 
 // Main App Component
 function App() {
