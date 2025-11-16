@@ -1,31 +1,40 @@
 class BookingsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_booking, only: %i[ show edit update destroy ]
 
   # GET /bookings or /bookings.json
   # Displays all bookings (for admin or listing view)
   def index
-    @bookings = Booking.all
+    @bookings = policy_scope(Booking)  # Pundit: limits bookings by role
   end
 
   # GET /bookings/1 or /bookings/1.json
   def show
+    authorize @booking  # Pundit authorization check
   end
 
   # GET /bookings/new
   # Displays the form to create a new booking
   def new
     @booking = Booking.new
+    authorize @booking
   end
 
   # GET /bookings/1/edit
   # Displays the form to edit an existing booking
   def edit
+    authorize @booking
   end
 
   # POST /bookings or /bookings.json
   # Handles creation of a new booking record
   def create
     @booking = Booking.new(booking_params)
+
+    # Automatically assign the logged-in user
+    @booking.user_id = current_user.id
+
+    authorize @booking
 
     respond_to do |format|
       if @booking.save
@@ -41,6 +50,8 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1 or /bookings/1.json
   # Updates existing booking data
   def update
+    authorize @booking
+
     respond_to do |format|
       if @booking.update(booking_params)
         format.html { redirect_to @booking, notice: "Booking was successfully updated.", status: :see_other }
@@ -55,6 +66,7 @@ class BookingsController < ApplicationController
   # DELETE /bookings/1 or /bookings/1.json
   # Deletes a booking record
   def destroy
+    authorize @booking  # Authorization check before destroy
     @booking.destroy!
 
     respond_to do |format|
@@ -70,7 +82,8 @@ class BookingsController < ApplicationController
     end
 
     # Only allow a list of trusted parameters through
+    # user_id is NOT permitted from the form (security)
     def booking_params
-      params.require(:booking).permit(:user_id, :event_id, :status)
+      params.require(:booking).permit(:event_id, :status)
     end
 end

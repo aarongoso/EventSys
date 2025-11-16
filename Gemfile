@@ -69,3 +69,5 @@ gem "sassc-rails"
 gem "rack-cors", "~> 3.0"
 
 gem "devise", "~> 4.9"
+
+gem "pundit", "~> 2.5"

@@ -1,27 +1,33 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_user, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
   def index
-    @users = User.all
+    # Pundit: limits users to admin only
+    @users = policy_scope(User)
   end
 
   # GET /users/1 or /users/1.json
   def show
+    authorize @user
   end
 
   # GET /users/new
   def new
     @user = User.new
+    authorize @user
   end
 
   # GET /users/1/edit
   def edit
+    authorize @user
   end
 
   # POST /users or /users.json
   def create
     @user = User.new(user_params)
+    authorize @user
 
     respond_to do |format|
       if @user.save
@@ -36,6 +42,8 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    authorize @user
+
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: "User was successfully updated.", status: :see_other }
@@ -49,6 +57,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1 or /users/1.json
   def destroy
+    authorize @user
     @user.destroy!
 
     respond_to do |format|
@@ -66,7 +75,13 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through
     # Devise handles password fields separately
+    # Only admin can update :role — this stops non admin users from
+    # elevating themselves via HTML tampering
     def user_params
-      params.expect(user: [:name, :email, :role])
+      if current_user.admin?
+        params.require(:user).permit(:name, :email, :role)
+      else
+        params.require(:user).permit(:name, :email)
+      end
     end
 end

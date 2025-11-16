@@ -5,7 +5,7 @@ class EventsController < ApplicationController
   # GET /events or /events.json
   def index
     # Loads all events and their associated users (eager loading for efficiency)
-    @events = Event.includes(:user).all
+    @events = policy_scope(Event.includes(:user))
 
     respond_to do |format|
       format.html # renders the default index.html.erb
@@ -15,6 +15,8 @@ class EventsController < ApplicationController
 
   # GET /events/1 or /events/1.json
   def show
+    authorize @event
+
     respond_to do |format|
       format.html # renders the default show.html.erb
       format.json { render json: @event.to_json(include: :user) }
@@ -24,18 +26,22 @@ class EventsController < ApplicationController
   # GET /events/new
   def new
     @event = Event.new
+    authorize @event
   end
 
   # GET /events/1/edit
   def edit
+    authorize @event
   end
 
   # POST /events or /events.json
   def create
     @event = Event.new(event_params)
 
-    # Temporary association until authentication is implemented
-    @event.user_id ||= User.first&.id
+    # Assign ownership of the event to the currently logged in user
+    @event.user = current_user
+
+    authorize @event
 
     respond_to do |format|
       if @event.save
@@ -50,6 +56,8 @@ class EventsController < ApplicationController
 
   # PATCH/PUT /events/1 or /events/1.json
   def update
+    authorize @event
+
     respond_to do |format|
       if @event.update(event_params)
         format.html { redirect_to @event, notice: "Event was successfully updated.", status: :see_other }
@@ -63,6 +71,7 @@ class EventsController < ApplicationController
 
   # DELETE /events/1 or /events/1.json
   def destroy
+    authorize @event
     @event.destroy!
 
     respond_to do |format|
@@ -72,13 +81,13 @@ class EventsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+    # Use callbacks to share common setup or constraints between actions
     def set_event
       @event = Event.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+    # Only allow a list of trusted parameters through
     def event_params
-      params.require(:event).permit(:title, :description, :location, :date, :time, :capacity, :user_id)
+      params.require(:event).permit(:title, :description, :location, :date, :time, :capacity)
     end
 end
