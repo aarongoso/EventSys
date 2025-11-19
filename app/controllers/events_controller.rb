@@ -1,7 +1,10 @@
 class EventsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [ :index, :show ]
   before_action :set_event, only: %i[ show edit update destroy ]
 
+  # Pundit verification
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
   # GET /events or /events.json
   def index
     # Loads all events and their associated users (eager loading for efficiency)

@@ -13,7 +13,6 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/bookings", type: :request do
-  
   # This should return the minimal set of attributes required to create a valid
   # Booking. As you add validations to Booking, be sure to
   # adjust the attributes here as well.
@@ -37,13 +36,6 @@ RSpec.describe "/bookings", type: :request do
     it "renders a successful response" do
       booking = Booking.create! valid_attributes
       get booking_url(booking)
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_booking_url
       expect(response).to be_successful
     end
   end

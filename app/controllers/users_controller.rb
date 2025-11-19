@@ -2,6 +2,10 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: %i[ show edit update destroy ]
 
+  # Pundit verification
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
+
   # GET /users or /users.json
   def index
     # Pundit: limits users to admin only
@@ -67,7 +71,6 @@ class UsersController < ApplicationController
   end
 
   private
-
     # Use callbacks to share common setup or constraints between actions
     def set_user
       @user = User.find(params[:id])
@@ -76,7 +79,6 @@ class UsersController < ApplicationController
     # Only allow a list of trusted parameters through
     # Devise handles password fields separately
     # Only admin can update :role — this stops non admin users from
-    # elevating themselves via HTML tampering
     def user_params
       if current_user.admin?
         params.require(:user).permit(:name, :email, :role)

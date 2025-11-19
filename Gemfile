@@ -54,15 +54,17 @@ group :development do
 end
 # Development and Testing Tools
 group :development, :test do
-  gem 'rspec-rails'
-  gem 'brakeman'
-  gem 'rubocop', require: false
+  gem "rspec-rails"
+  gem "shoulda-matchers", "~> 6.0"
+  gem "brakeman"
+  gem "rubocop", require: false
+  gem "factory_bot_rails"
 end
 
 # Frontend UI and Forms
-gem 'bootstrap', '~> 5.3.0'
-gem 'simple_form'
-gem 'jquery-rails'
+gem "bootstrap", "~> 5.3.0"
+gem "simple_form"
+gem "jquery-rails"
 
 gem "sassc-rails"
 

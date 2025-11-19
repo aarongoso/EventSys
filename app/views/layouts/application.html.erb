@@ -52,8 +52,8 @@
                 <%= link_to "Logout",
                             destroy_user_session_path,
                             method: :delete,
-                            data: { turbo_method: :delete },
-                            class: "nav-link text-danger" %>
+                            form: { data: { turbo: false } },
+                            class: "nav-link text-danger btn btn-link p-0" %>
               </li>
 
             <% else %>

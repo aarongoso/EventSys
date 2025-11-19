@@ -107,6 +107,11 @@ GEM
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
+    factory_bot (6.5.6)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.1)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -327,6 +332,8 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.4.1)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
@@ -411,6 +418,7 @@ DEPENDENCIES
   brakeman
   debug
   devise (~> 4.9)
+  factory_bot_rails
   importmap-rails
   jbuilder
   jquery-rails
@@ -425,6 +433,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails-omakase
   sassc-rails
+  shoulda-matchers (~> 6.0)
   simple_form
   solid_cable
   solid_cache

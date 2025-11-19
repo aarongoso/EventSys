@@ -2,6 +2,10 @@ class BookingsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_booking, only: %i[ show edit update destroy ]
 
+  # Pundit verification
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
+
   # GET /bookings or /bookings.json
   # Displays all bookings (for admin or listing view)
   def index
@@ -66,7 +70,7 @@ class BookingsController < ApplicationController
   # DELETE /bookings/1 or /bookings/1.json
   # Deletes a booking record
   def destroy
-    authorize @booking  # Authorization check before destroy
+    authorize @booking
     @booking.destroy!
 
     respond_to do |format|
@@ -76,7 +80,7 @@ class BookingsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions
+
     def set_booking
       @booking = Booking.find(params[:id])
     end
