@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/custom.css";
+// using env variable for backend URL (learned from React labs)
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Home Page Component
 function Home() {
@@ -10,7 +12,8 @@ function Home() {
   const [error, setError] = useState("");       // Error message state
 
   useEffect(() => {
-    fetch("http://localhost:3000/events.json")
+    // Updated from localhost to env variable
+    fetch(`${API_URL}/events.json`)
       .then((res) => res.json())
       .then((data) => setEvents(data))
       .catch((err) => console.error("Error fetching events:", err));
@@ -18,7 +21,8 @@ function Home() {
 
   // BOOKING FUNCTION (sends POST request to Rails API)
   const handleBooking = (eventId) => {
-    fetch("http://localhost:3000/bookings.json", {
+    // localhost to env variable
+    fetch(`${API_URL}/bookings.json`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -139,7 +143,8 @@ function CreateEvent() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:3000/events.json", {
+    // localhost to env variable
+    fetch(`${API_URL}/events.json`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ event: formData }),
