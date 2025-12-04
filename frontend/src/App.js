@@ -111,11 +111,6 @@ function Home() {
             events.map((event) => (
               <div className="col-md-4" key={event.id}>
                 <div className="card h-100 border-0 shadow-sm">
-                  <img
-                    src={`https://source.unsplash.com/600x400/?event,${event.title}`}
-                    className="card-img-top"
-                    alt={event.title}
-                  />
                   <div className="card-body">
                     <h5 className="card-title fw-bold">{event.title}</h5>
                     <p className="text-muted mb-1">{event.location}</p>
@@ -459,7 +454,7 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-dark text-light text-center py-3">
-        © 2025 <span>EventSys</span> — Built with Rails & React
+        © 2025 <span>EventSys</span> — Built with Rails & React by Aaron Goslin
       </footer>
 
     </Router>
