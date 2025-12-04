@@ -11,12 +11,22 @@ class EmailController < ApplicationController
     # fetch event normally
     event = Event.find(params[:event_id])
 
-    # send the email using ActionMailer
+    # Real email via Letter Opener
     # following examples from ActionMailer lecture
-    UserMailer.booking_confirmation(user, event).deliver_now
+    if Rails.env.development?
+      UserMailer.booking_confirmation(user, event).deliver_now
+      return render json: { message: "Email preview opened (development mode)." }, status: :ok
+    end
 
-    # JSON response for React frontend
-    render json: { message: "Confirmation email sent successfully." }, status: :ok
+
+    # Render Simulates email instead of sending
+    # avoids SMTP errors because cloud deploys dont provide port 25 which is causing the error
+    Rails.logger.info "Simulated email send to #{user.email} for event #{event.title}"
+
+    render json: {
+      message: "Confirmation email sent successfully (simulated in production)."
+    }, status: :ok
+
   rescue StandardError => e
     # basic error handling pattern fromm labs
     render json: { error: e.message }, status: :unprocessable_entity
