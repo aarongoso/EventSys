@@ -62,7 +62,7 @@ end
 # Development and Testing Tools
 group :development, :test do
   gem "rspec-rails"
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   gem "brakeman"
   gem "rubocop", require: false
   gem "factory_bot_rails"
